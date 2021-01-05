@@ -2,12 +2,17 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-app.use((req, res, next) => {
-  const reqstartTime = new Date()
-  next();
-  const resendTime = new Date()
-  console.log(`${reqstartTime.toLocaleString()} | ${req.method} from ${req.originalUrl} | total time: ${resendTime - reqstartTime} ms`)
-})
+const myLogger = (req, res, next) => {
+  const reqstartTime = new Date() 
+  res.on('finish', () => {
+    const resendTime = new Date() 
+    console.log(`${reqstartTime.toLocaleString()} | ${req.method} from ${req.originalUrl} | total time: ${resendTime - reqstartTime} ms`)
+  })
+
+  next()
+}
+
+app.use(myLogger)
 
 
 app.get('/', (req, res) => {
